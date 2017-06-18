@@ -1,7 +1,6 @@
 from flask import Flask, request
 
 app = Flask(__name__)
-
 app.config['DEBUG'] = True      # displays runtime errors in the browser, too
 
 page_header = """
@@ -32,26 +31,45 @@ add_form = """
 """
 
 # TODO:
-# Create the HTML for the form below so the user can check off a movie from their list 
+# Create the HTML for the form below so the user can check off a movie from their list
 # when they've watched it.
 # Name the action for the form '/crossoff' and make its method 'post'.
 
 # a form for crossing off watched movies
 crossoff_form = """
-
+    <form action="/crossoff" method="post">
+        <label for="crossed-off-movie">
+            I want to cross off
+            <select name="crossed-off-movie"/>
+                <option value="Memento">Memento</option>
+                <option value="Robots">Robots</option>
+                <option value="Inception">Inception</option>
+                <option value="Top Gun">Top Gun</option>
+                <option value="Toy Story">Toy Story</option>
+            </select>
+            to my watchlist.
+        </label>
+            <input type="submit" value="Remove It"/>
+    </form>
 """
 
 # TODO:
 # Finish filling in the function below so that the user will see a message like:
 # "Star Wars has been crossed off your watchlist".
-# And create a route above the function definition to receive and handle the request from 
+# And create a route above the function definition to receive and handle the request from
 # your crossoff_form.
+@app.route("/crossoff", methods=['POST'])
 def crossoff_movie():
-    crossed_off_movie = request.form['crossed-off-movie']    
+    crossed_off_movie = request.form['crossed-off-movie']
 
 # TODO:
 # modify the crossoff_form above to use a dropdown (<select>) instead of
 # an input text field (<input type="text"/>)
+    crossed_off_movie_element = "<strike>" + crossed_off_movie + "</strike>"
+    sentence = crossed_off_movie_element + " has been removed from your Watchlist!"
+    content = page_header + "<p>" + sentence + "</p>" + page_footer
+
+    return content
 
 @app.route("/add", methods=['POST'])
 def add_movie():
@@ -70,7 +88,7 @@ def index():
     edit_header = "<h2>Edit My Watchlist</h2>"
 
     # build the response string
-    content = page_header + edit_header + add_form + page_footer
+    content = page_header + edit_header + add_form + crossoff_form + page_footer
 
     return content
 
